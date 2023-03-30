@@ -1,6 +1,4 @@
 /**
- * Using JSDoc to get typesafety.
- *
  * @type {import("@inlang/core/config").DefineConfig}
  */
 export async function defineConfig(env) {
@@ -20,6 +18,10 @@ export async function defineConfig(env) {
     );
   }
 
+  const { missingMessage, messageWithoutReference } = await env.$import(
+    "https://cdn.jsdelivr.net/gh/inlang/standard-lint-rules@1/dist/index.js"
+  );
+
   const pluginConfig = {
     pathPattern: "./resources/{language}.json",
   };
@@ -33,6 +35,9 @@ export async function defineConfig(env) {
     writeResources: (args) => {
       return plugin.writeResources({ ...args, ...env, pluginConfig });
     },
+    lint: {
+      rules: [missingMessage("error"), messageWithoutReference("error")],
+    },
     ideExtension: {
       messageReferenceMatchers: [
         async (/** @type {{ "documentText": string; }} */ args) => {
@@ -42,29 +47,40 @@ export async function defineConfig(env) {
           const result = [];
 
           while ((match = regex.exec(str)) !== null) {
-            const startLine = (str.slice(0, Math.max(0, match.index)).match(/\n/g) || []).length + 1;
-            const startPos = match.index - str.lastIndexOf('\n', match.index - 1);
-            const endPos = match.index + match[0].length - str.lastIndexOf('\n', match.index + match[0].length - 1);
-            const endLine = (str.slice(0, Math.max(0, match.index + match[0].length)).match(/\n/g) || []).length + 1;
+            const startLine =
+              (str.slice(0, Math.max(0, match.index)).match(/\n/g) || [])
+                .length + 1;
+            const startPos =
+              match.index - str.lastIndexOf("\n", match.index - 1);
+            const endPos =
+              match.index +
+              match[0].length -
+              str.lastIndexOf("\n", match.index + match[0].length - 1);
+            const endLine =
+              (
+                str
+                  .slice(0, Math.max(0, match.index + match[0].length))
+                  .match(/\n/g) || []
+              ).length + 1;
 
-            if (match.groups && 'messageId' in match.groups) {
+            if (match.groups && "messageId" in match.groups) {
               result.push({
-                messageId: match.groups['messageId'],
+                messageId: match.groups["messageId"],
                 position: {
                   start: {
                     line: startLine,
-                    character: startPos
+                    character: startPos,
                   },
                   end: {
                     line: endLine,
-                    character: endPos
-                  }
-                }
-              })
+                    character: endPos,
+                  },
+                },
+              });
             }
           }
           return result;
-        }
+        },
       ],
       extractMessageOptions: [
         {
