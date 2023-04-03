@@ -9,7 +9,7 @@ export async function defineConfig(env) {
   );
 
   const { default: standardLintRules } = await env.$import(
-    "https://cdn.jsdelivr.net/gh/inlang/standard-lint-rules@1/dist/index.js"
+    "https://raw.githubusercontent.com/inlang/standard-lint-rules/main/dist/index.js"
   );
 
   const pluginConfig = {
