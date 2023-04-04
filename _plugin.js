@@ -134,6 +134,7 @@ var require_flat = __commonJS({
 
 // src/index.ts
 var import_flat = __toESM(require_flat(), 1);
+console.log(0, "hello from plugin");
 async function getLanguages(args) {
   const [pathBeforeLanguage, pathAfterLanguage] = args.pluginConfig.pathPattern.split("{language}");
   const pathAfterLanguageisDirectory = pathAfterLanguage.startsWith("/");
