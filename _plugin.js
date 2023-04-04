@@ -236,7 +236,8 @@ function serializeResource(resource) {
   console.log(1, resource);
   const obj = {};
   resource.body.forEach((message) => {
-    objectSafeSet(obj, message.id.name, serializeMessage(message));
+    const [key, value] = serializeMessage(message);
+    objectSafeSet(obj, key, value);
   });
   console.log(2, obj);
   return JSON.stringify(obj, null, 2);
